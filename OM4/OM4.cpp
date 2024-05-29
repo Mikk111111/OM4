@@ -64,25 +64,25 @@ void pivot(vector<vector<double>>& table, int pivotRow, int pivotCol, int m, int
     }
 }
 
-vector<double> simplex(vector<vector<double>>& tableau, int m, int n) {
+vector<double> simplex(vector<vector<double>>& table, int m, int n) {
     while (true) {
-        int pivotCol = findPivotColumn(tableau, m, n);
+        int pivotCol = findPivotColumn(table, m, n);
         if (pivotCol == -1) break;  // Optimal solution found
 
-        int pivotRow = findPivotRow(tableau, pivotCol, m, n);
+        int pivotRow = findPivotRow(table, pivotCol, m, n);
         if (pivotRow == -1) {
             cout << "Unbounded solution." << endl;
             return {};
         }
 
-        pivot(tableau, pivotRow, pivotCol, m, n);
+        pivot(table, pivotRow, pivotCol, m, n);
     }
 
     vector<double> solutionx(n, 0);
     for (int i = 0; i < m; i++) {
         int basicVarIndex = -1;
         for (int j = 0; j < n; j++) {
-            if (fabs(tableau[i][j] - 1) < ZeroCheck) {
+            if (fabs(table[i][j] - 1) < ZeroCheck) {
                 if (basicVarIndex == -1) {
                     basicVarIndex = j;
                 }
@@ -91,55 +91,37 @@ vector<double> simplex(vector<vector<double>>& tableau, int m, int n) {
                     break;
                 }
             }
-            else if (fabs(tableau[i][j]) > ZeroCheck) {
+            else if (fabs(table[i][j]) > ZeroCheck) {
                 basicVarIndex = -1;
                 break;
             }
         }
         if (basicVarIndex != -1) {
-            solutionx[basicVarIndex] = tableau[i][n];
+            solutionx[basicVarIndex] = table[i][n];
         }
     }
     return solutionx;
 }
 
-vector<double> simpley(vector<vector<double>>& tableus, int m, int n) {
-    while (true) {
-        int pivotCol = findPivotColumn(tableus, m, n);
-        if (pivotCol == -1) break;  // Optimal solution found
+void StarWork(vector<vector<double>>& table,int m, int n){
 
-        int pivotRow = findPivotRow(tableus, pivotCol, m, n);
-        if (pivotRow == -1) {
-            cout << "Unbounded solution." << endl;
-            return {};
-        }
+    cout << "Initial Tableau:" << endl;
+    printTable(table, m, n);
 
-        pivot(tableus, pivotRow, pivotCol, m, n);
+    // Perform the simplex algorithm
+    vector<double> solutionx = simplex(table, m, n);
+
+    // Print the final table
+    cout << "Final Tableau:" << endl;
+    printTable(table, m, n);
+
+    // Print the solution
+    cout << "Optimal solution:" << endl;
+    for (int i = 0; i < solutionx.size(); i++) {
+        cout << "Variable " << i + 1 << " = " << solutionx[i] << endl;
     }
 
-    vector<double> solutiony(n, 0);
-    for (int i = 0; i < m; i++) {
-        int basicVarIndex = -1;
-        for (int j = 0; j < n; j++) {
-            if (fabs(tableus[i][j] - 1) < ZeroCheck) {
-                if (basicVarIndex == -1) {
-                    basicVarIndex = j;
-                }
-                else {
-                    basicVarIndex = -1;
-                    break;
-                }
-            }
-            else if (fabs(tableus[i][j]) > ZeroCheck) {
-                basicVarIndex = -1;
-                break;
-            }
-        }
-        if (basicVarIndex != -1) {
-            solutiony[basicVarIndex] = tableus[i][n];
-        }
-    }
-    return solutiony;
+    cout << "Optimal value of the objective function: " << -table[m][n] << endl;
 }
 
 int main() {
@@ -149,7 +131,7 @@ int main() {
     int n = 7;
 
     // Augmented matrix (tableau)
-    vector<vector<double>> tableau = {
+    vector<vector<double>> table1 = {
         {-1, 1, -1, -1, 1, 0, 0, 8},  // -x + y - c - z + s1 = 8
         {2, 4, 0, 0, 0, 1, 0, 10},    // 2x + 4y + s2 = 10
         {0, 0, 1, 1, 0, 0, 1, 3},     // c + z + s3 = 3
@@ -157,36 +139,14 @@ int main() {
     };
 
     // Augmented matrix (tableus)
-    vector<vector<double>> tableus = {
+    vector<vector<double>> table2 = {
         {-1, 1, -1, -1, 1, 0, 0, 2},  // -x + y - c - z + s1 = 2
         {2, 4, 0, 0, 0, 1, 0, 7},    // 2x + 4y + s2 = 7
         {0, 0, 1, 1, 0, 0, 1, 3},     // c + z + s3 = 3
         {2, -3, -5, 0, 0, 0, 0, 0}    // Objective function: 2x - 3y - 5c
     };
 
+    StarWork(table1, m, n);
 
-    cout << "Initial Tableau:" << endl;
-    printTable(tableau, m, n);
-
-    // Perform the simplex algorithm
-    vector<double> solutionx = simplex(tableau, m, n);
-
-    // Print the final table
-    cout << "Final Tableau:" << endl;
-    printTable(tableau, m, n);
-
-    cout << "Optimal value of the objective function: " << -tableau[m][n] << endl << endl;
-
-    cout << "Initial Tableus:" << endl;
-    printTable(tableus, m, n);
-
-    // Perform the simpley algorithm
-    vector<double> solutiony = simpley(tableus, m, n);
-
-    // Print the final table
-    cout << "Final Tableus:" << endl;
-    printTable(tableus, m, n);
-
-    cout << "Optimal value of the objective function: " << -tableus[m][n] << endl;
     return 0;
 }
