@@ -12,34 +12,34 @@ using namespace std;
 // 5.Palyginkite uždavinių sprendimo rezultatus : minimali tikslo funkcijos reikšmė, optimalus sprendinys ir bazė
 const double ZeroCheck = 0;  // A small constant to check for zero
 
-void printTable(const vector<vector<double>>& tableau, int m, int n) {
+void printTable(const vector<vector<double>>& table, int m, int n) {
     for (int i = 0; i <= m; i++) {
         for (int j = 0; j <= n; j++) {
-            cout << setw(10) << setprecision(5) << tableau[i][j] << " ";
+            cout << setw(10) << setprecision(5) << table[i][j] << " ";
         }
         cout << endl;
     }
     cout << endl;
 }
 
-int findPivotColumn(const vector<vector<double>>& tableau, int m, int n) {
+int findPivotColumn(const vector<vector<double>>& table, int m, int n) {
     int pivotCol = -1;
     double minValue = 0;
     for (int j = 0; j < n; j++) {
-        if (tableau[m][j] < minValue) {
-            minValue = tableau[m][j];
+        if (table[m][j] < minValue) {
+            minValue = table[m][j];
             pivotCol = j;
         }
     }
     return pivotCol;
 }
 
-int findPivotRow(const vector<vector<double>>& tableau, int pivotCol, int m, int n) {
+int findPivotRow(const vector<vector<double>>& table, int pivotCol, int m, int n) {
     int pivotRow = -1;
     double minRatio = INFINITY;
     for (int i = 0; i < m; i++) {
-        if (tableau[i][pivotCol] > ZeroCheck) {
-            double ratio = tableau[i][n] / tableau[i][pivotCol];
+        if (table[i][pivotCol] > ZeroCheck) {
+            double ratio = table[i][n] / table[i][pivotCol];
             if (ratio < minRatio) {
                 minRatio = ratio;
                 pivotRow = i;
@@ -49,16 +49,16 @@ int findPivotRow(const vector<vector<double>>& tableau, int pivotCol, int m, int
     return pivotRow;
 }
 
-void pivot(vector<vector<double>>& tableau, int pivotRow, int pivotCol, int m, int n) {
-    double pivotValue = tableau[pivotRow][pivotCol];
+void pivot(vector<vector<double>>& table, int pivotRow, int pivotCol, int m, int n) {
+    double pivotValue = table[pivotRow][pivotCol];
     for (int j = 0; j <= n; j++) {
-        tableau[pivotRow][j] /= pivotValue;
+        table[pivotRow][j] /= pivotValue;
     }
     for (int i = 0; i <= m; i++) {
         if (i != pivotRow) {
-            double factor = tableau[i][pivotCol];
+            double factor = table[i][pivotCol];
             for (int j = 0; j <= n; j++) {
-                tableau[i][j] -= factor * tableau[pivotRow][j];
+                table[i][j] -= factor * table[pivotRow][j];
             }
         }
     }
@@ -156,7 +156,7 @@ int main() {
         {2, -3, -5, 0, 0, 0, 0, 0}    // Objective function: 2x - 3y - 5c
     };
 
-    // Augmented matrix (tableau)
+    // Augmented matrix (tableus)
     vector<vector<double>> tableus = {
         {-1, 1, -1, -1, 1, 0, 0, 2},  // -x + y - c - z + s1 = 2
         {2, 4, 0, 0, 0, 1, 0, 7},    // 2x + 4y + s2 = 7
@@ -175,29 +175,17 @@ int main() {
     cout << "Final Tableau:" << endl;
     printTable(tableau, m, n);
 
-    // Print the solution
-    cout << "Optimal solution:" << endl;
-    for (int i = 0; i < solutionx.size(); i++) {
-        cout << "Variable " << i + 1 << " = " << solutionx[i] << endl;
-    }
+    cout << "Optimal value of the objective function: " << -tableau[m][n] << endl << endl;
 
-    cout << "Optimal value of the objective function: " << -tableau[m][n] << endl;
-
-    cout << "Initial Tableau:" << endl;
+    cout << "Initial Tableus:" << endl;
     printTable(tableus, m, n);
 
-    // Perform the simplex algorithm
+    // Perform the simpley algorithm
     vector<double> solutiony = simpley(tableus, m, n);
 
     // Print the final table
-    cout << "Final Tableau:" << endl;
+    cout << "Final Tableus:" << endl;
     printTable(tableus, m, n);
-
-    // Print the solution
-    cout << "Optimal solution:" << endl;
-    for (int i = 0; i < solutiony.size(); i++) {
-        cout << "Variable " << i + 1 << " = " << solutiony[i] << endl;
-    }
 
     cout << "Optimal value of the objective function: " << -tableus[m][n] << endl;
     return 0;
