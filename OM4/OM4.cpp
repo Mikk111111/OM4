@@ -1,13 +1,18 @@
-#include <iostream>
+﻿#include <iostream>
 #include <vector>
 #include <iomanip>
 #include <cmath>
 
 using namespace std;
 
-const double EPSILON = 1e-9;  // A small constant to check for zero
+// 1.Suprogramuokite simplekso algoritmą tiesinio programavimo uždaviniams.
+// 2.Užrašykite duotą uždavinį matriciniu pavidalu standartine forma.
+// 3.Išspręskite uždavinį suprogramuotu simplekso algoritmu.
+// 4.Pakeiskite apribojimų dešinės pusės konstantas į a, b ir c – studento knygelės numerio “1x1xabc” skaitmenis.Išspręskite individualų uždavinį suprogramuotu simplekso algoritmu.
+// 5.Palyginkite uždavinių sprendimo rezultatus : minimali tikslo funkcijos reikšmė, optimalus sprendinys ir bazė
+const double ZeroCheck = 0;  // A small constant to check for zero
 
-void printTableau(const vector<vector<double>>& tableau, int m, int n) {
+void printTable(const vector<vector<double>>& tableau, int m, int n) {
     for (int i = 0; i <= m; i++) {
         for (int j = 0; j <= n; j++) {
             cout << setw(10) << setprecision(5) << tableau[i][j] << " ";
@@ -33,7 +38,7 @@ int findPivotRow(const vector<vector<double>>& tableau, int pivotCol, int m, int
     int pivotRow = -1;
     double minRatio = INFINITY;
     for (int i = 0; i < m; i++) {
-        if (tableau[i][pivotCol] > EPSILON) {
+        if (tableau[i][pivotCol] > ZeroCheck) {
             double ratio = tableau[i][n] / tableau[i][pivotCol];
             if (ratio < minRatio) {
                 minRatio = ratio;
@@ -73,11 +78,11 @@ vector<double> simplex(vector<vector<double>>& tableau, int m, int n) {
         pivot(tableau, pivotRow, pivotCol, m, n);
     }
 
-    vector<double> solution(n, 0);
+    vector<double> solutionx(n, 0);
     for (int i = 0; i < m; i++) {
         int basicVarIndex = -1;
         for (int j = 0; j < n; j++) {
-            if (fabs(tableau[i][j] - 1) < EPSILON) {
+            if (fabs(tableau[i][j] - 1) < ZeroCheck) {
                 if (basicVarIndex == -1) {
                     basicVarIndex = j;
                 }
@@ -86,22 +91,61 @@ vector<double> simplex(vector<vector<double>>& tableau, int m, int n) {
                     break;
                 }
             }
-            else if (fabs(tableau[i][j]) > EPSILON) {
+            else if (fabs(tableau[i][j]) > ZeroCheck) {
                 basicVarIndex = -1;
                 break;
             }
         }
         if (basicVarIndex != -1) {
-            solution[basicVarIndex] = tableau[i][n];
+            solutionx[basicVarIndex] = tableau[i][n];
         }
     }
-    return solution;
+    return solutionx;
+}
+
+vector<double> simpley(vector<vector<double>>& tableus, int m, int n) {
+    while (true) {
+        int pivotCol = findPivotColumn(tableus, m, n);
+        if (pivotCol == -1) break;  // Optimal solution found
+
+        int pivotRow = findPivotRow(tableus, pivotCol, m, n);
+        if (pivotRow == -1) {
+            cout << "Unbounded solution." << endl;
+            return {};
+        }
+
+        pivot(tableus, pivotRow, pivotCol, m, n);
+    }
+
+    vector<double> solutiony(n, 0);
+    for (int i = 0; i < m; i++) {
+        int basicVarIndex = -1;
+        for (int j = 0; j < n; j++) {
+            if (fabs(tableus[i][j] - 1) < ZeroCheck) {
+                if (basicVarIndex == -1) {
+                    basicVarIndex = j;
+                }
+                else {
+                    basicVarIndex = -1;
+                    break;
+                }
+            }
+            else if (fabs(tableus[i][j]) > ZeroCheck) {
+                basicVarIndex = -1;
+                break;
+            }
+        }
+        if (basicVarIndex != -1) {
+            solutiony[basicVarIndex] = tableus[i][n];
+        }
+    }
+    return solutiony;
 }
 
 int main() {
-    // Number of constraints
+    // Number
     int m = 3;
-    // Number of variables including slack variables
+    // Lenght
     int n = 7;
 
     // Augmented matrix (tableau)
@@ -112,24 +156,49 @@ int main() {
         {2, -3, -5, 0, 0, 0, 0, 0}    // Objective function: 2x - 3y - 5c
     };
 
-    // Print the initial tableau
+    // Augmented matrix (tableau)
+    vector<vector<double>> tableus = {
+        {-1, 1, -1, -1, 1, 0, 0, 2},  // -x + y - c - z + s1 = 2
+        {2, 4, 0, 0, 0, 1, 0, 7},    // 2x + 4y + s2 = 7
+        {0, 0, 1, 1, 0, 0, 1, 3},     // c + z + s3 = 3
+        {2, -3, -5, 0, 0, 0, 0, 0}    // Objective function: 2x - 3y - 5c
+    };
+
+
     cout << "Initial Tableau:" << endl;
-    printTableau(tableau, m, n);
+    printTable(tableau, m, n);
 
     // Perform the simplex algorithm
-    vector<double> solution = simplex(tableau, m, n);
+    vector<double> solutionx = simplex(tableau, m, n);
 
-    // Print the final tableau
+    // Print the final table
     cout << "Final Tableau:" << endl;
-    printTableau(tableau, m, n);
+    printTable(tableau, m, n);
 
     // Print the solution
     cout << "Optimal solution:" << endl;
-    for (int i = 0; i < solution.size(); i++) {
-        cout << "Variable " << i + 1 << " = " << solution[i] << endl;
+    for (int i = 0; i < solutionx.size(); i++) {
+        cout << "Variable " << i + 1 << " = " << solutionx[i] << endl;
     }
 
     cout << "Optimal value of the objective function: " << -tableau[m][n] << endl;
 
+    cout << "Initial Tableau:" << endl;
+    printTable(tableus, m, n);
+
+    // Perform the simplex algorithm
+    vector<double> solutiony = simpley(tableus, m, n);
+
+    // Print the final table
+    cout << "Final Tableau:" << endl;
+    printTable(tableus, m, n);
+
+    // Print the solution
+    cout << "Optimal solution:" << endl;
+    for (int i = 0; i < solutiony.size(); i++) {
+        cout << "Variable " << i + 1 << " = " << solutiony[i] << endl;
+    }
+
+    cout << "Optimal value of the objective function: " << -tableus[m][n] << endl;
     return 0;
 }
