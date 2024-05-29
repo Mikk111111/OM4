@@ -9,10 +9,11 @@ using namespace std;
 // 2.Užrašykite duotą uždavinį matriciniu pavidalu standartine forma.
 // 3.Išspręskite uždavinį suprogramuotu simplekso algoritmu.
 // 4.Pakeiskite apribojimų dešinės pusės konstantas į a, b ir c – studento knygelės numerio “1x1xabc” skaitmenis.Išspręskite individualų uždavinį suprogramuotu simplekso algoritmu.
-// 5.Palyginkite uždavinių sprendimo rezultatus : minimali tikslo funkcijos reikšmė, optimalus sprendinys ir bazė
+// 5.Palyginkite uždavinių sprendimo rezultatus : minimali tikslo funkcijos reikšmė, optimalus sprendinys ir bazė.
 const double ZeroCheck = 0;  // A small constant to check for zero
 
 void printTable(const vector<vector<double>>& table, int m, int n) {
+
     for (int i = 0; i <= m; i++) {
         for (int j = 0; j <= n; j++) {
             cout << setw(10) << setprecision(5) << table[i][j] << " ";
@@ -23,6 +24,7 @@ void printTable(const vector<vector<double>>& table, int m, int n) {
 }
 
 int findPivotColumn(const vector<vector<double>>& table, int m, int n) {
+
     int pivotCol = -1;
     double minValue = 0;
     for (int j = 0; j < n; j++) {
@@ -35,6 +37,7 @@ int findPivotColumn(const vector<vector<double>>& table, int m, int n) {
 }
 
 int findPivotRow(const vector<vector<double>>& table, int pivotCol, int m, int n) {
+
     int pivotRow = -1;
     double minRatio = INFINITY;
     for (int i = 0; i < m; i++) {
@@ -50,6 +53,7 @@ int findPivotRow(const vector<vector<double>>& table, int pivotCol, int m, int n
 }
 
 void pivot(vector<vector<double>>& table, int pivotRow, int pivotCol, int m, int n) {
+
     double pivotValue = table[pivotRow][pivotCol];
     for (int j = 0; j <= n; j++) {
         table[pivotRow][j] /= pivotValue;
@@ -65,6 +69,7 @@ void pivot(vector<vector<double>>& table, int pivotRow, int pivotCol, int m, int
 }
 
 vector<double> simplex(vector<vector<double>>& table, int m, int n) {
+
     while (true) {
         int pivotCol = findPivotColumn(table, m, n);
         if (pivotCol == -1) break;  // Optimal solution found
@@ -105,21 +110,21 @@ vector<double> simplex(vector<vector<double>>& table, int m, int n) {
 
 void StarWork(vector<vector<double>>& table,int m, int n){
 
-    cout << "Initial Tableau:" << endl;
+    cout << "Initial Table:" << endl;
     printTable(table, m, n);
 
     // Perform the simplex algorithm
     vector<double> solutionx = simplex(table, m, n);
 
     // Print the final table
-    cout << "Final Tableau:" << endl;
+    cout << "Final Table:" << endl;
     printTable(table, m, n);
 
     // Print the solution
-    cout << "Optimal solution:" << endl;
-    for (int i = 0; i < solutionx.size(); i++) {
-        cout << "Variable " << i + 1 << " = " << solutionx[i] << endl;
-    }
+    //cout << "Optimal solution:" << endl;
+    //for (int i = 0; i < solutionx.size(); i++) {
+    //    cout << "Variable " << i + 1 << " = " << solutionx[i] << endl;
+    //}
 
     cout << "Optimal value of the objective function: " << -table[m][n] << endl;
 }
@@ -147,6 +152,7 @@ int main() {
     };
 
     StarWork(table1, m, n);
+    StarWork(table2, m, n);
 
     return 0;
 }
